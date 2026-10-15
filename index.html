@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Balance General de Café de la Montaña</title>
+<style>
+:root{
+  --navy:#0B2545; --gold:#E8A317; --teal:#0F8B8D; --teal-dark:#0A5F61; --teal-light:#D5EEEE;
+  --red:#C0392B; --red-light:#F6DAD6; --slate:#4A5A85; --slate-light:#DDE1EC; --ok:#2E8B57; --ink:#1F2937; --gray:#6B7280; --mist:#EEF2F7; --line:#D1D9E6; --bg:#F7F9FC; --card:#FFFFFF;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Calibri,Carlito,"Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.45}
+header{background:var(--navy);color:#fff;padding:28px 16px 32px}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+header .wrap{padding:0}
+.kicker{color:var(--gold);font-weight:700;letter-spacing:.12em;font-size:13px;text-transform:uppercase}
+h1{font-family:Cambria,Caladea,Georgia,serif;font-size:32px;margin:6px 0 8px;line-height:1.15}
+header p{margin:0;color:#D1D9E6;max-width:720px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chip{background:rgba(255,255,255,.1);border-radius:999px;padding:4px 12px;font-size:14px}
+section.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin:20px 0}
+h2{font-family:Cambria,Caladea,Georgia,serif;color:var(--navy);font-size:24px;margin:0 0 4px}
+.lead{color:var(--gray);margin:0 0 16px}
+.ctx{background:#FFF6E0;border-radius:10px;padding:14px 16px;margin:0 0 4px}
+.ctx b{color:var(--navy)}
+.ref{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin-top:12px}
+.ref div{border-radius:8px;padding:8px 10px;font-size:14px}
+.ref .p{background:var(--red-light)} .ref .p b{color:var(--red)}
+.ref .t{background:var(--slate-light)} .ref .t b{color:var(--slate)}
+table.acc{width:100%;border-collapse:collapse}
+table.acc th{background:var(--navy);color:#fff;text-align:left;font-size:14px;padding:10px;font-weight:700}
+table.acc td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+table.acc tr:nth-child(even) td{background:#FAFBFD}
+.name{font-weight:700;color:var(--navy)}
+.desc{color:var(--gray);font-size:14px}
+.val{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+select,input[type=text]{font:inherit;font-size:15px;padding:7px 8px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);width:100%}
+select:focus,input:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal)}
+.good{border-color:var(--ok)!important;background:#EAF6EF!important}
+.bad{border-color:var(--red)!important;background:#FBE9E7!important}
+.hint{display:none;font-size:13px;color:var(--red);margin-top:4px}
+.hint.show{display:block}
+/* Estado vertical */
+.stmt{max-width:640px;margin:0 auto;border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.stmt .hd{text-align:center;font-weight:700;color:var(--navy);margin-bottom:14px;line-height:1.35}
+.stmt .hd span{display:block;font-weight:400;color:var(--gray);font-size:14px}
+.ln{display:grid;grid-template-columns:1fr 210px;gap:12px;align-items:center;padding:5px 0}
+.ln .v{text-align:right;font-variant-numeric:tabular-nums}
+.ln.h{font-weight:700;margin-top:8px}
+.ln.sub{padding-left:16px}
+.ln.tot{font-weight:700;border-radius:6px;padding:7px 8px;margin-top:4px}
+.c-a{color:var(--teal)} .c-p{color:var(--red)} .c-t{color:var(--slate)}
+.bg-a{background:var(--teal-light)} .bg-p{background:var(--red-light)} .bg-t{background:var(--slate-light)} .bg-n{background:var(--navy);color:#fff}
+.ln input{text-align:right}
+.ln .hint{grid-column:1/-1}
+.q{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0}
+.q.good{background:#EAF6EF} .q.bad{background:#FBE9E7}
+.q p{margin:0 0 10px;font-weight:700;color:var(--navy)}
+.q label{display:flex;gap:10px;align-items:flex-start;padding:6px 4px;cursor:pointer;border-radius:6px}
+.q label:hover{background:rgba(15,139,141,.06)}
+.q input{margin-top:4px;accent-color:var(--teal)}
+.btn{font:inherit;font-weight:700;font-size:17px;border:0;border-radius:10px;padding:13px 22px;cursor:pointer}
+.btn-main{background:var(--teal);color:#fff}
+.btn-main:hover{background:var(--teal-dark)}
+.btn-gold{background:var(--gold);color:var(--navy)}
+.actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+#msg{color:var(--red);font-weight:700}
+#result,#evidence{display:none}
+.score{display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.big{font-family:Cambria,Caladea,Georgia,serif;font-size:56px;font-weight:700;color:var(--teal);line-height:1}
+.parts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.part{background:var(--mist);border-radius:10px;padding:12px}
+.part b{display:block;font-size:22px;color:var(--navy)}
+.note{font-size:14px;color:var(--gray)}
+footer{color:var(--gray);font-size:13px;text-align:center;padding:24px 16px 40px}
+@media (max-width:720px){
+  h1{font-size:26px}
+  table.acc thead{display:none}
+  table.acc, table.acc tbody, table.acc tr, table.acc td{display:block;width:100%}
+  table.acc tr{border:1px solid var(--line);border-radius:10px;margin-bottom:12px;padding:6px}
+  table.acc td{border:0;padding:6px 8px}
+  table.acc td.val{text-align:left}
+  table.acc td[data-l]::before{content:attr(data-l);display:block;font-size:12px;color:var(--gray);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+  .parts{grid-template-columns:1fr}
+  .stmt{padding:14px 10px}
+  .ln{grid-template-columns:1fr 150px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="kicker">Contabilidad de Empresas · Unidad II · Sesión 2</div>
+    <h1>El Balance General de Café de la Montaña S.A.S.</h1>
+    <p>El martes organizaste el activo. Hoy completas el lado derecho: pasivo y patrimonio, en formato vertical. Al calificar verás de inmediato qué está bien y qué debes revisar.</p>
+    <div class="chips"><span class="chip">20 minutos</span><span class="chip">3 partes · 34 puntos</span><span class="chip">Nota sobre 5,0</span><span class="chip">Evidencia PNG para Classroom</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card">
+    <div class="ctx">Estos son los saldos de las cuentas de pasivo y patrimonio de Café de la Montaña <b>al 31 de octubre de 2026</b>. El activo es el mismo de la Sesión 1: <b>$422.200.000</b>.</div>
+    <div class="ref" aria-label="Grupos del PUC">
+      <div class="p"><b>21</b> Obligaciones financieras</div><div class="p"><b>22</b> Proveedores</div><div class="p"><b>23</b> Cuentas por pagar</div><div class="p"><b>24</b> Impuestos, gravámenes y tasas</div><div class="p"><b>25</b> Obligaciones laborales</div>
+      <div class="t"><b>31</b> Capital social</div><div class="t"><b>33</b> Reservas</div><div class="t"><b>36</b> Resultados del ejercicio</div><div class="t"><b>37</b> Resultados de ejercicios anteriores</div>
+    </div>
+  </section>
+
+  <section class="card" id="p1">
+    <h2>Parte 1 · Clasifica las cuentas</h2>
+    <p class="lead">Para cada cuenta elige su grupo del PUC y dónde va en el Balance General. 24 puntos (1 por casilla).</p>
+    <table class="acc">
+      <thead><tr><th>Cuenta</th><th style="text-align:right">Saldo</th><th style="width:220px">Grupo PUC</th><th style="width:190px">Ubicación</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </section>
+
+  <section class="card" id="p2">
+    <h2>Parte 2 · Completa el Balance General</h2>
+    <p class="lead">Escribe los subtotales en pesos, sin signo $ (puedes usar puntos de miles). El activo ya está diligenciado. 5 puntos.</p>
+    <div class="stmt">
+      <div class="hd">CAFÉ DE LA MONTAÑA S.A.S.<br>Estado de Situación Financiera<span>Al 31 de octubre de 2026 · Cifras en pesos colombianos</span></div>
+      <div class="ln h c-a"><div>ACTIVO</div><div></div></div>
+      <div class="ln sub"><div>Total activo corriente</div><div class="v">72.500.000</div></div>
+      <div class="ln sub"><div>Total activo no corriente</div><div class="v">349.700.000</div></div>
+      <div class="ln tot bg-a"><div>TOTAL ACTIVO</div><div class="v">422.200.000</div></div>
+
+      <div class="ln h c-p"><div>PASIVO</div><div></div></div>
+      <div class="ln sub"><label for="t_pc">Total pasivo corriente</label><input type="text" inputmode="numeric" id="t_pc"><div class="hint" id="h_pc">Suma las seis obligaciones que vencen en los próximos 12 meses, incluida la cuota del préstamo.</div></div>
+      <div class="ln sub"><label for="t_pnc">Total pasivo no corriente</label><input type="text" inputmode="numeric" id="t_pnc"><div class="hint" id="h_pnc">Solo lo que vence después de 12 meses: la parte larga del préstamo y el leasing.</div></div>
+      <div class="ln tot bg-p"><label for="t_tp">TOTAL PASIVO</label><input type="text" inputmode="numeric" id="t_tp"><div class="hint" id="h_tp">Total pasivo = pasivo corriente + pasivo no corriente.</div></div>
+
+      <div class="ln h c-t"><div>PATRIMONIO</div><div></div></div>
+      <div class="ln tot bg-t"><label for="t_pt">TOTAL PATRIMONIO</label><input type="text" inputmode="numeric" id="t_pt"><div class="hint" id="h_pt">Suma capital, reserva, utilidades acumuladas y utilidad del ejercicio.</div></div>
+      <div class="ln tot bg-n"><label for="t_tpp">TOTAL PASIVO + PATRIMONIO</label><input type="text" inputmode="numeric" id="t_tpp"><div class="hint" id="h_tpp" style="color:#FFD7D1">Debe dar igual al total activo.</div></div>
+    </div>
+  </section>
+
+  <section class="card" id="p3">
+    <h2>Parte 3 · Analiza</h2>
+    <p class="lead">5 puntos.</p>
+    <div id="qs"></div>
+  </section>
+
+  <section class="card">
+    <div class="actions">
+      <button class="btn btn-main" id="grade">Calificar</button>
+      <span id="msg"></span>
+    </div>
+    <p class="note" style="margin:10px 0 0">Puedes calificar varias veces. El comprobante registra el número de intentos.</p>
+  </section>
+
+  <section class="card" id="result">
+    <h2>Resultado</h2>
+    <div class="score">
+      <div class="big" id="nota">0,0</div>
+      <div><div id="pts" style="font-weight:700;color:var(--navy)"></div><div class="note" id="att"></div></div>
+    </div>
+    <div class="parts">
+      <div class="part">Parte 1 · Clasificación<b id="s1">0 / 24</b></div>
+      <div class="part">Parte 2 · Balance<b id="s2">0 / 5</b></div>
+      <div class="part">Parte 3 · Análisis<b id="s3">0 / 5</b></div>
+    </div>
+    <p class="note" id="advice" style="margin-top:12px"></p>
+  </section>
+
+  <section class="card" id="evidence">
+    <h2>Evidencia para Classroom</h2>
+    <p class="lead">Escribe tu nombre completo y descarga el comprobante. Súbelo a la tarea en Google Classroom.</p>
+    <div class="actions">
+      <input type="text" id="student" placeholder="Nombre y apellidos" style="max-width:380px" autocomplete="name">
+      <button class="btn btn-gold" id="dl">Descargar comprobante PNG</button>
+    </div>
+    <p class="note" id="dlmsg" style="margin-top:10px"></p>
+  </section>
+</main>
+<footer>Universidad Tecnológica de Pereira · Ingeniería Industrial · Contabilidad de Empresas (II243)</footer>
+
+<script>
+(function(){
+  var GROUPS = [["21","21 · Obligaciones financieras"],["22","22 · Proveedores"],["23","23 · Cuentas por pagar"],["24","24 · Impuestos, gravámenes y tasas"],["25","25 · Obligaciones laborales"],["31","31 · Capital social"],["33","33 · Reservas"],["36","36 · Resultados del ejercicio"],["37","37 · Resultados de ejercicios anteriores"]];
+  var LOC = [["PC","Pasivo corriente"],["PNC","Pasivo no corriente"],["PT","Patrimonio"]];
+  var ACC = [
+    {n:"Salarios por pagar", d:"Nómina de la segunda quincena de octubre; se paga el 5 de noviembre", v:4800000, g:"25", c:"PC"},
+    {n:"Capital suscrito y pagado", d:"Aportes de los socios de la empresa", v:250000000, g:"31", c:"PT"},
+    {n:"Préstamo bancario: cuotas de los próximos 12 meses", d:"Parte del crédito para la planta que vence entre noviembre de 2026 y octubre de 2027", v:5200000, g:"21", c:"PC"},
+    {n:"IVA por pagar", d:"Impuesto del bimestre septiembre–octubre; se paga en noviembre", v:3600000, g:"24", c:"PC"},
+    {n:"Leasing financiero de la tostadora", d:"Saldo del contrato que vence después de octubre de 2027", v:18000000, g:"21", c:"PNC"},
+    {n:"Utilidades acumuladas", d:"Ganancias de años anteriores que los socios no han repartido", v:38400000, g:"37", c:"PT"},
+    {n:"Proveedores nacionales", d:"Cooperativa caficultora; pago a 45 días", v:12400000, g:"22", c:"PC"},
+    {n:"Préstamo bancario: saldo a más de 12 meses", d:"Resto del crédito para la planta; última cuota en 2030", v:46800000, g:"21", c:"PNC"},
+    {n:"Retención en la fuente por pagar", d:"Se declara y paga a la DIAN en noviembre", v:900000, g:"23", c:"PC"},
+    {n:"Reserva legal", d:"10 % de las utilidades de años anteriores, exigido por la ley", v:12000000, g:"33", c:"PT"},
+    {n:"Costos y gastos por pagar", d:"Servicios públicos y transporte de octubre, aún sin pagar", v:2100000, g:"23", c:"PC"},
+    {n:"Utilidad del ejercicio", d:"Ganancia obtenida de enero a octubre de 2026", v:28000000, g:"36", c:"PT"}
+  ];
+  var TOT = {t_pc:29000000, t_pnc:64800000, t_tp:93800000, t_pt:328400000, t_tpp:422200000};
+  var TLAB = {t_pc:"Total pasivo corriente", t_pnc:"Total pasivo no corriente", t_tp:"Total pasivo", t_pt:"Total patrimonio", t_tpp:"Total pasivo + patrimonio"};
+  var QS = [
+    {p:"¿Cuál es el nivel de endeudamiento de Café de la Montaña (pasivo total ÷ activo total)?", o:["22 %","29 %","78 %","7 %"], a:0, h:"Divide el total pasivo entre el total activo, no entre el patrimonio."},
+    {p:"El préstamo bancario de la planta suma $52.000.000, pero aparece en dos cuentas. ¿Por qué?", o:["Porque una parte se le debe al banco y otra a los socios","Porque las cuotas que vencen en los próximos 12 meses son pasivo corriente y el resto es no corriente","Porque cada año se paga la mitad del préstamo","Es un error: todo préstamo bancario es pasivo no corriente"], a:1, h:"Recuerda el ejemplo del préstamo de $100.000.000 a 5 años."},
+    {p:"Si los socios aportan $20.000.000 adicionales en efectivo, ¿qué pasa?", o:["Aumentan el activo y el pasivo en $20.000.000","Solo aumenta el patrimonio","Aumentan el activo corriente y el patrimonio en $20.000.000","Aumenta el activo y disminuye el pasivo"], a:2, h:"Entra dinero a la empresa y los dueños ponen más capital: ¿qué lado de la ecuación cambia además del activo?"},
+    {p:"La empresa paga $12.400.000 a la cooperativa (proveedores) desde Bancos. ¿Qué pasa?", o:["Disminuye el patrimonio en $12.400.000","El activo y el pasivo disminuyen $12.400.000; el patrimonio no cambia","Disminuye el activo y aumenta el patrimonio","No cambia ninguna cuenta"], a:1, h:"Pagar una deuda no hace más pobres a los dueños: mira qué baja en cada lado."},
+    {p:"¿Por qué la utilidad del ejercicio va en el patrimonio y no en el pasivo?", o:["Porque es dinero que está en el banco","Porque es una deuda con la DIAN","Porque pertenece a los dueños; no es una obligación con terceros","Porque es un ingreso del próximo año"], a:2, h:"El pasivo son deudas con terceros. ¿A quién le pertenece la ganancia?"}
+  ];
+
+  var fmt = function(v){return "$" + v.toLocaleString("es-CO");};
+  var rows = document.getElementById("rows");
+  ACC.forEach(function(a,i){
+    var tr = document.createElement("tr");
+    var gsel = '<select id="g'+i+'" aria-label="Grupo PUC de '+a.n+'"><option value="">Elige…</option>' + GROUPS.map(function(g){return '<option value="'+g[0]+'">'+g[1]+'</option>';}).join("") + '</select>';
+    var csel = '<select id="c'+i+'" aria-label="Ubicación de '+a.n+'"><option value="">Elige…</option>' + LOC.map(function(l){return '<option value="'+l[0]+'">'+l[1]+'</option>';}).join("") + '</select>';
+    tr.innerHTML = '<td><div class="name">'+(i+1)+'. '+a.n+'</div><div class="desc">'+a.d+'</div></td><td class="val" data-l="Saldo">'+fmt(a.v)+'</td><td data-l="Grupo PUC">'+gsel+'</td><td data-l="Ubicación">'+csel+'</td>';
+    rows.appendChild(tr);
+  });
+  var qs = document.getElementById("qs");
+  QS.forEach(function(q,i){
+    var d = document.createElement("div"); d.className="q"; d.id="q"+i;
+    d.innerHTML = '<p>'+(i+1)+'. '+q.p+'</p>' + q.o.map(function(o,j){return '<label><input type="radio" name="r'+i+'" value="'+j+'"><span>'+o+'</span></label>';}).join("") + '<div class="hint" id="qh'+i+'">Pista: '+q.h+'</div>';
+    qs.appendChild(d);
+  });
+
+  function num(s){var t=(s||"").replace(/[^0-9]/g,""); return t===""?null:parseInt(t,10);}
+  function mark(el,ok){el.classList.remove("good","bad"); el.classList.add(ok?"good":"bad");}
+
+  var attempts = 0, last = null;
+  document.getElementById("grade").addEventListener("click", function(){
+    var msg = document.getElementById("msg"); msg.textContent = "";
+    var missing = 0;
+    ACC.forEach(function(a,i){ if(!document.getElementById("g"+i).value) missing++; if(!document.getElementById("c"+i).value) missing++; });
+    Object.keys(TOT).forEach(function(id){ if(num(document.getElementById(id).value)===null) missing++; });
+    QS.forEach(function(q,i){ if(!document.querySelector('input[name="r'+i+'"]:checked')) missing++; });
+    if(missing>0){ msg.textContent = "Te faltan " + missing + " respuestas por completar."; return; }
+
+    attempts++;
+    var s1=0, s2=0, s3=0, detail=[], tvals={}, qans=[];
+    ACC.forEach(function(a,i){
+      var g=document.getElementById("g"+i), c=document.getElementById("c"+i);
+      var okg = g.value===a.g, okc = c.value===a.c;
+      mark(g,okg); mark(c,okc); s1 += (okg?1:0)+(okc?1:0);
+      detail.push({n:a.n, g:g.value, c:c.value, okg:okg, okc:okc});
+    });
+    Object.keys(TOT).forEach(function(id){
+      var el=document.getElementById(id), v=num(el.value), ok = v===TOT[id];
+      tvals[id]=v; mark(el,ok); document.getElementById("h_"+id.slice(2)).classList.toggle("show",!ok); if(ok) s2++;
+    });
+    QS.forEach(function(q,i){
+      var v = parseInt(document.querySelector('input[name="r'+i+'"]:checked').value,10), ok = v===q.a;
+      mark(document.getElementById("q"+i), ok); document.getElementById("qh"+i).classList.toggle("show",!ok); if(ok) s3++;
+      qans.push({ok:ok});
+    });
+    var pts = s1+s2+s3, nota = Math.round(pts/34*50)/10;
+    last = {s1:s1,s2:s2,s3:s3,pts:pts,nota:nota,detail:detail,tvals:tvals,qans:qans,attempt:attempts,when:new Date()};
+
+    document.getElementById("result").style.display="block";
+    document.getElementById("evidence").style.display="block";
+    document.getElementById("nota").textContent = nota.toFixed(1).replace(".",",");
+    document.getElementById("pts").textContent = pts + " de 34 puntos";
+    document.getElementById("att").textContent = "Intento " + attempts;
+    document.getElementById("s1").textContent = s1 + " / 24";
+    document.getElementById("s2").textContent = s2 + " / 5";
+    document.getElementById("s3").textContent = s3 + " / 5";
+    document.getElementById("advice").textContent = pts===34 ? "¡Excelente! Tu Balance General cuadra: Activo = Pasivo + Patrimonio. Escribe tu nombre y descarga tu comprobante." :
+      "Las casillas en rojo tienen error. Revísalas con ayuda de las pistas y vuelve a calificar, o descarga el comprobante con este resultado.";
+    document.getElementById("result").scrollIntoView({behavior:"smooth",block:"start"});
+  });
+
+  function hash(str){var h=2166136261; for(var i=0;i<str.length;i++){h^=str.charCodeAt(i); h=Math.imul(h,16777619);} return ("00000000"+(h>>>0).toString(16)).slice(-8).toUpperCase();}
+  function roundRect(c,x0,y0,w,h,r){c.beginPath();c.moveTo(x0+r,y0);c.arcTo(x0+w,y0,x0+w,y0+h,r);c.arcTo(x0+w,y0+h,x0,y0+h,r);c.arcTo(x0,y0+h,x0,y0,r);c.arcTo(x0,y0,x0+w,y0,r);c.closePath();}
+  var LOCN = {PC:"Pasivo corriente", PNC:"Pasivo no corriente", PT:"Patrimonio"};
+
+  document.getElementById("dl").addEventListener("click", function(){
+    var name = document.getElementById("student").value.trim();
+    var m = document.getElementById("dlmsg");
+    if(!last){ m.textContent="Primero califica la actividad."; return; }
+    if(name.length<5){ m.textContent="Escribe tu nombre completo para generar el comprobante."; return; }
+    var W=1200, H=1380, cv=document.createElement("canvas"); cv.width=W; cv.height=H;
+    var x=cv.getContext("2d");
+    var F='Calibri, Carlito, "Segoe UI", Arial, sans-serif', S='Cambria, Caladea, Georgia, serif';
+    x.fillStyle="#FFFFFF"; x.fillRect(0,0,W,H);
+    x.fillStyle="#0B2545"; x.fillRect(0,0,W,190);
+    x.fillStyle="#E8A317"; x.font="700 22px "+F; x.fillText("CONTABILIDAD DE EMPRESAS · UNIDAD II · SESIÓN 2",60,62);
+    x.fillStyle="#FFFFFF"; x.font="700 40px "+S; x.fillText("Balance General de Café de la Montaña S.A.S.",60,118);
+    x.fillStyle="#D1D9E6"; x.font="22px "+F; x.fillText("Comprobante de actividad autocalificable",60,158);
+    var d=last.when;
+    var when=d.toLocaleDateString("es-CO",{day:"2-digit",month:"long",year:"numeric"})+" · "+d.toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"});
+    x.fillStyle="#1F2937"; x.font="700 30px "+F; x.fillText(name,60,250);
+    x.fillStyle="#6B7280"; x.font="22px "+F; x.fillText(when+" · Intento "+last.attempt,60,285);
+    x.fillStyle="#EEF2F7"; roundRect(x,820,215,320,150,16); x.fill();
+    x.fillStyle="#0F8B8D"; x.font="700 76px "+S; x.textAlign="center"; x.fillText(last.nota.toFixed(1).replace(".",","),980,310);
+    x.fillStyle="#1F2937"; x.font="22px "+F; x.fillText(last.pts+" de 34 puntos",980,345); x.textAlign="left";
+    [["Parte 1 · Clasificación",last.s1+" / 24"],["Parte 2 · Balance",last.s2+" / 5"],["Parte 3 · Análisis",last.s3+" / 5"]].forEach(function(p,i){ var px=60+i*360; x.fillStyle="#EEF2F7"; roundRect(x,px,395,340,86,12); x.fill(); x.fillStyle="#6B7280"; x.font="20px "+F; x.fillText(p[0],px+20,428); x.fillStyle="#0B2545"; x.font="700 30px "+F; x.fillText(p[1],px+20,466); });
+    x.fillStyle="#0B2545"; x.font="700 24px "+F; x.fillText("Respuestas de la Parte 1",60,535);
+    var y=570; x.font="18px "+F; x.fillStyle="#6B7280"; x.fillText("Cuenta",60,y); x.fillText("Grupo",720,y); x.fillText("Ubicación",860,y); y+=12;
+    x.strokeStyle="#D1D9E6"; x.beginPath(); x.moveTo(60,y); x.lineTo(1140,y); x.stroke(); y+=30;
+    last.detail.forEach(function(r,i){
+      var nm=(i+1)+". "+r.n; if(nm.length>58) nm=nm.slice(0,56)+"…";
+      x.fillStyle="#1F2937"; x.font="20px "+F; x.fillText(nm,60,y);
+      x.fillStyle=r.okg?"#2E8B57":"#C0392B"; x.font="700 20px "+F; x.fillText((r.okg?"✓ ":"✗ ")+r.g,720,y);
+      x.fillStyle=r.okc?"#2E8B57":"#C0392B"; x.fillText((r.okc?"✓ ":"✗ ")+LOCN[r.c],860,y);
+      y+=36;
+    });
+    y+=14; x.fillStyle="#0B2545"; x.font="700 24px "+F; x.fillText("Partes 2 y 3",60,y); y+=38;
+    Object.keys(TOT).forEach(function(id){ var v=last.tvals[id], ok=v===TOT[id];
+      x.fillStyle="#1F2937"; x.font="20px "+F; x.fillText(TLAB[id],60,y);
+      x.fillStyle=ok?"#2E8B57":"#C0392B"; x.font="700 20px "+F; x.fillText((ok?"✓ ":"✗ ")+"$"+v.toLocaleString("es-CO"),400,y); y+=34; });
+    x.fillStyle="#1F2937"; x.font="20px "+F; x.fillText("Preguntas de análisis",60,y);
+    last.qans.forEach(function(q,i){ x.fillStyle=q.ok?"#2E8B57":"#C0392B"; x.font="700 20px "+F; x.fillText((i+1)+(q.ok?" ✓":" ✗"),400+i*80,y); });
+    var code=hash(name+"|"+last.pts+"|"+last.attempt+"|"+d.toISOString()+"|"+JSON.stringify(last.detail));
+    x.fillStyle="#6B7280"; x.font="18px "+F; x.fillText("Código de verificación: "+code,60,H-40);
+    x.textAlign="right"; x.fillText("UTP · Ingeniería Industrial · II243",W-60,H-40);
+    var a=document.createElement("a");
+    a.download="Sesion2_Balance_"+name.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ ]/g,"").trim().replace(/\s+/g,"_")+".png";
+    a.href=cv.toDataURL("image/png"); document.body.appendChild(a); a.click(); a.remove();
+    m.textContent="Comprobante descargado (código "+code+"). Súbelo a la tarea en Classroom.";
+  });
+})();
+</script>
+</body>
+</html>
